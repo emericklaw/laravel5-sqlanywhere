@@ -36,8 +36,7 @@ class SQLAnywhereQueryGrammar extends Grammar
      */
     public function compileSelect(Builder $query)
     {
-        if (is_null($query->columns))
-        {
+        if (is_null($query->columns)) {
             $query->columns = array('*');
         }
         return 'select ' . trim($this->concatenate($this->compileComponents($query)));
@@ -54,8 +53,7 @@ class SQLAnywhereQueryGrammar extends Grammar
     {
         $column = $this->columnize($aggregate['columns']);
 
-        if ($query->distinct && $column !== '*')
-        {
+        if ($query->distinct && $column !== '*') {
             $column = 'distinct ' . $column;
         }
         return $aggregate['function'] . '(' . $column . ') as aggregate';
@@ -70,8 +68,7 @@ class SQLAnywhereQueryGrammar extends Grammar
      */
     protected function compileColumns(Builder $query, $columns)
     {
-        if (!is_null($query->aggregate))
-        {
+        if (!is_null($query->aggregate)) {
             return;
         }
         $select = $query->distinct ? 'distinct ' : '';
@@ -113,5 +110,20 @@ class SQLAnywhereQueryGrammar extends Grammar
         $existsQuery = clone $query;
         $existsQuery->columns = [];
         return $this->compileSelect($existsQuery->selectRaw('1 [exists]')->limit(1));
+    }
+
+    /**
+     * Compile the random statement into SQL.
+     *
+     * @param  string  $seed
+     * @return string
+     */
+    public function compileRandom($seed)
+    {
+        if (is_int($seed)) {
+            return 'rand(' . ((int) $seed) . ')';
+        } else {
+            return 'rand()';
+        }
     }
 }
